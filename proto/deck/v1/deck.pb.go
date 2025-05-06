@@ -30,6 +30,7 @@ const (
 	Card_SUIT_DIAMONDS    Card_Suit = 3
 	Card_SUIT_CLUBS       Card_Suit = 4
 	Card_SUIT_JOKERS      Card_Suit = 5
+	Card_SUIT_HIDDEN      Card_Suit = 6
 )
 
 // Enum value maps for Card_Suit.
@@ -41,6 +42,7 @@ var (
 		3: "SUIT_DIAMONDS",
 		4: "SUIT_CLUBS",
 		5: "SUIT_JOKERS",
+		6: "SUIT_HIDDEN",
 	}
 	Card_Suit_value = map[string]int32{
 		"SUIT_UNSPECIFIED": 0,
@@ -49,6 +51,7 @@ var (
 		"SUIT_DIAMONDS":    3,
 		"SUIT_CLUBS":       4,
 		"SUIT_JOKERS":      5,
+		"SUIT_HIDDEN":      6,
 	}
 )
 
@@ -271,6 +274,66 @@ func (x *PushCardRequest) GetCard() *Card {
 	return nil
 }
 
+type CreateDeckRequest struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	JokerCount          int32                  `protobuf:"varint,1,opt,name=jokerCount,proto3" json:"jokerCount,omitempty"`
+	Shuffle             bool                   `protobuf:"varint,2,opt,name=shuffle,proto3" json:"shuffle,omitempty"`
+	AdditionalDeckCount int32                  `protobuf:"varint,3,opt,name=additionalDeckCount,proto3" json:"additionalDeckCount,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *CreateDeckRequest) Reset() {
+	*x = CreateDeckRequest{}
+	mi := &file_proto_deck_v1_deck_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateDeckRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateDeckRequest) ProtoMessage() {}
+
+func (x *CreateDeckRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_deck_v1_deck_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateDeckRequest.ProtoReflect.Descriptor instead.
+func (*CreateDeckRequest) Descriptor() ([]byte, []int) {
+	return file_proto_deck_v1_deck_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateDeckRequest) GetJokerCount() int32 {
+	if x != nil {
+		return x.JokerCount
+	}
+	return 0
+}
+
+func (x *CreateDeckRequest) GetShuffle() bool {
+	if x != nil {
+		return x.Shuffle
+	}
+	return false
+}
+
+func (x *CreateDeckRequest) GetAdditionalDeckCount() int32 {
+	if x != nil {
+		return x.AdditionalDeckCount
+	}
+	return 0
+}
+
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -279,7 +342,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_proto_deck_v1_deck_proto_msgTypes[4]
+	mi := &file_proto_deck_v1_deck_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -291,7 +354,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_deck_v1_deck_proto_msgTypes[4]
+	mi := &file_proto_deck_v1_deck_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -304,7 +367,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_deck_v1_deck_proto_rawDescGZIP(), []int{4}
+	return file_proto_deck_v1_deck_proto_rawDescGZIP(), []int{5}
 }
 
 var File_proto_deck_v1_deck_proto protoreflect.FileDescriptor
@@ -313,10 +376,10 @@ const file_proto_deck_v1_deck_proto_rawDesc = "" +
 	"\n" +
 	"\x18proto/deck/v1/deck.proto\x12\fdeck.v1.deck\"\x1f\n" +
 	"\x04Deck\x12\x17\n" +
-	"\adeck_id\x18\x01 \x01(\tR\x06deckId\"\xbb\x01\n" +
+	"\adeck_id\x18\x01 \x01(\tR\x06deckId\"\xcd\x01\n" +
 	"\x04Card\x12+\n" +
 	"\x04suit\x18\x01 \x01(\x0e2\x17.deck.v1.deck.Card.SuitR\x04suit\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value\"p\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value\"\x81\x01\n" +
 	"\x04Suit\x12\x14\n" +
 	"\x10SUIT_UNSPECIFIED\x10\x00\x12\r\n" +
 	"\tSUIT_ACES\x10\x01\x12\x0f\n" +
@@ -324,15 +387,22 @@ const file_proto_deck_v1_deck_proto_rawDesc = "" +
 	"\rSUIT_DIAMONDS\x10\x03\x12\x0e\n" +
 	"\n" +
 	"SUIT_CLUBS\x10\x04\x12\x0f\n" +
-	"\vSUIT_JOKERS\x10\x05\":\n" +
+	"\vSUIT_JOKERS\x10\x05\x12\x0f\n" +
+	"\vSUIT_HIDDEN\x10\x06\":\n" +
 	"\x10FetchCardRequest\x12&\n" +
 	"\x04deck\x18\x01 \x01(\v2\x12.deck.v1.deck.DeckR\x04deck\"a\n" +
 	"\x0fPushCardRequest\x12&\n" +
 	"\x04deck\x18\x01 \x01(\v2\x12.deck.v1.deck.DeckR\x04deck\x12&\n" +
-	"\x04card\x18\x02 \x01(\v2\x12.deck.v1.deck.CardR\x04card\"\a\n" +
-	"\x05Empty2\xc7\x01\n" +
-	"\vDeckService\x123\n" +
-	"\x06Create\x12\x13.deck.v1.deck.Empty\x1a\x12.deck.v1.deck.Deck\"\x00\x12A\n" +
+	"\x04card\x18\x02 \x01(\v2\x12.deck.v1.deck.CardR\x04card\"\x7f\n" +
+	"\x11CreateDeckRequest\x12\x1e\n" +
+	"\n" +
+	"jokerCount\x18\x01 \x01(\x05R\n" +
+	"jokerCount\x12\x18\n" +
+	"\ashuffle\x18\x02 \x01(\bR\ashuffle\x120\n" +
+	"\x13additionalDeckCount\x18\x03 \x01(\x05R\x13additionalDeckCount\"\a\n" +
+	"\x05Empty2\xd3\x01\n" +
+	"\vDeckService\x12?\n" +
+	"\x06Create\x12\x1f.deck.v1.deck.CreateDeckRequest\x1a\x12.deck.v1.deck.Deck\"\x00\x12A\n" +
 	"\tFetchCard\x12\x1e.deck.v1.deck.FetchCardRequest\x1a\x12.deck.v1.deck.Card\"\x00\x12@\n" +
 	"\bPushCard\x12\x1d.deck.v1.deck.PushCardRequest\x1a\x13.deck.v1.deck.Empty\"\x00B\x98\x01\n" +
 	"\x10com.deck.v1.deckB\tDeckProtoP\x01Z'github.com/chn555/schemas/proto/deck/v1\xa2\x02\x03DVD\xaa\x02\fDeck.V1.Deck\xca\x02\fDeck\\V1\\Deck\xe2\x02\x18Deck\\V1\\Deck\\GPBMetadata\xea\x02\x0eDeck::V1::Deckb\x06proto3"
@@ -350,26 +420,27 @@ func file_proto_deck_v1_deck_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_deck_v1_deck_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_deck_v1_deck_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_deck_v1_deck_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_deck_v1_deck_proto_goTypes = []any{
-	(Card_Suit)(0),           // 0: deck.v1.deck.Card.Suit
-	(*Deck)(nil),             // 1: deck.v1.deck.Deck
-	(*Card)(nil),             // 2: deck.v1.deck.Card
-	(*FetchCardRequest)(nil), // 3: deck.v1.deck.FetchCardRequest
-	(*PushCardRequest)(nil),  // 4: deck.v1.deck.PushCardRequest
-	(*Empty)(nil),            // 5: deck.v1.deck.Empty
+	(Card_Suit)(0),            // 0: deck.v1.deck.Card.Suit
+	(*Deck)(nil),              // 1: deck.v1.deck.Deck
+	(*Card)(nil),              // 2: deck.v1.deck.Card
+	(*FetchCardRequest)(nil),  // 3: deck.v1.deck.FetchCardRequest
+	(*PushCardRequest)(nil),   // 4: deck.v1.deck.PushCardRequest
+	(*CreateDeckRequest)(nil), // 5: deck.v1.deck.CreateDeckRequest
+	(*Empty)(nil),             // 6: deck.v1.deck.Empty
 }
 var file_proto_deck_v1_deck_proto_depIdxs = []int32{
 	0, // 0: deck.v1.deck.Card.suit:type_name -> deck.v1.deck.Card.Suit
 	1, // 1: deck.v1.deck.FetchCardRequest.deck:type_name -> deck.v1.deck.Deck
 	1, // 2: deck.v1.deck.PushCardRequest.deck:type_name -> deck.v1.deck.Deck
 	2, // 3: deck.v1.deck.PushCardRequest.card:type_name -> deck.v1.deck.Card
-	5, // 4: deck.v1.deck.DeckService.Create:input_type -> deck.v1.deck.Empty
+	5, // 4: deck.v1.deck.DeckService.Create:input_type -> deck.v1.deck.CreateDeckRequest
 	3, // 5: deck.v1.deck.DeckService.FetchCard:input_type -> deck.v1.deck.FetchCardRequest
 	4, // 6: deck.v1.deck.DeckService.PushCard:input_type -> deck.v1.deck.PushCardRequest
 	1, // 7: deck.v1.deck.DeckService.Create:output_type -> deck.v1.deck.Deck
 	2, // 8: deck.v1.deck.DeckService.FetchCard:output_type -> deck.v1.deck.Card
-	5, // 9: deck.v1.deck.DeckService.PushCard:output_type -> deck.v1.deck.Empty
+	6, // 9: deck.v1.deck.DeckService.PushCard:output_type -> deck.v1.deck.Empty
 	7, // [7:10] is the sub-list for method output_type
 	4, // [4:7] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -388,7 +459,7 @@ func file_proto_deck_v1_deck_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_deck_v1_deck_proto_rawDesc), len(file_proto_deck_v1_deck_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

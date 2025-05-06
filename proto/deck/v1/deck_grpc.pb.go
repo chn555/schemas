@@ -28,7 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DeckServiceClient interface {
-	Create(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Deck, error)
+	Create(ctx context.Context, in *CreateDeckRequest, opts ...grpc.CallOption) (*Deck, error)
 	FetchCard(ctx context.Context, in *FetchCardRequest, opts ...grpc.CallOption) (*Card, error)
 	PushCard(ctx context.Context, in *PushCardRequest, opts ...grpc.CallOption) (*Empty, error)
 }
@@ -41,7 +41,7 @@ func NewDeckServiceClient(cc grpc.ClientConnInterface) DeckServiceClient {
 	return &deckServiceClient{cc}
 }
 
-func (c *deckServiceClient) Create(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Deck, error) {
+func (c *deckServiceClient) Create(ctx context.Context, in *CreateDeckRequest, opts ...grpc.CallOption) (*Deck, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Deck)
 	err := c.cc.Invoke(ctx, DeckService_Create_FullMethodName, in, out, cOpts...)
@@ -75,7 +75,7 @@ func (c *deckServiceClient) PushCard(ctx context.Context, in *PushCardRequest, o
 // All implementations must embed UnimplementedDeckServiceServer
 // for forward compatibility.
 type DeckServiceServer interface {
-	Create(context.Context, *Empty) (*Deck, error)
+	Create(context.Context, *CreateDeckRequest) (*Deck, error)
 	FetchCard(context.Context, *FetchCardRequest) (*Card, error)
 	PushCard(context.Context, *PushCardRequest) (*Empty, error)
 	mustEmbedUnimplementedDeckServiceServer()
@@ -88,7 +88,7 @@ type DeckServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedDeckServiceServer struct{}
 
-func (UnimplementedDeckServiceServer) Create(context.Context, *Empty) (*Deck, error) {
+func (UnimplementedDeckServiceServer) Create(context.Context, *CreateDeckRequest) (*Deck, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedDeckServiceServer) FetchCard(context.Context, *FetchCardRequest) (*Card, error) {
@@ -119,7 +119,7 @@ func RegisterDeckServiceServer(s grpc.ServiceRegistrar, srv DeckServiceServer) {
 }
 
 func _DeckService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(CreateDeckRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func _DeckService_Create_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: DeckService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DeckServiceServer).Create(ctx, req.(*Empty))
+		return srv.(DeckServiceServer).Create(ctx, req.(*CreateDeckRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

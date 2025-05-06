@@ -32,10 +32,16 @@ message PushCardRequest {
   Card card = 2;
 }
 
+message CreateDeckRequest {
+  int32 jokerCount = 1;
+  bool shuffle = 2;
+  int32 additionalDeckCount = 3;
+}
+
 message Empty{}
 
 service DeckService {
-  rpc Create(Empty) returns (Deck){}
+  rpc Create(CreateDeckRequest) returns (Deck){}
 
   rpc FetchCard(FetchCardRequest) returns (Card){}
 
