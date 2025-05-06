@@ -16,6 +16,7 @@ message Card {
     SUIT_DIAMONDS = 3;
     SUIT_CLUBS = 4;
     SUIT_JOKERS = 5;
+    SUIT_HIDDEN = 6;
   }
 
   Suit suit = 1;
