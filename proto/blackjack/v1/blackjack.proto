@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package blackjack.v1.blackjack;
+
+option go_package = "github.com/chn555/schemas/proto/blackjack/v1";
+import "proto/deck/v1/deck.proto";
+
+message Game {
+  string game_id = 1;
+  repeated deck.v1.deck.Card player_cards = 2;
+  repeated deck.v1.deck.Card visible_dealer_cards = 3;
+  int32 player_score = 4;
+  int32 dealer_score = 5;
+
+  enum GAME_STATUS {
+    GAME_STATUS_UNSPECIFIED = 0;
+    GAME_STATUS_WAITING_FOR_PLAYERS = 1;
+    GAME_STATUS_FINISHED = 2;
+  }
+  GAME_STATUS status = 6;
+}
+
+message Turn {
+  enum TURN_ACTION {
+    TURN_ACTION_UNSPECIFIED = 0;
+    TURN_ACTION_HIT = 1;
+    TURN_ACTION_STAND = 2;
+  }
+  TURN_ACTION action = 1;
+}
