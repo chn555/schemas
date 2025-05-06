@@ -25,22 +25,25 @@ const (
 type Game_GAME_STATUS int32
 
 const (
-	Game_GAME_STATUS_UNSPECIFIED         Game_GAME_STATUS = 0
-	Game_GAME_STATUS_WAITING_FOR_PLAYERS Game_GAME_STATUS = 1
-	Game_GAME_STATUS_FINISHED            Game_GAME_STATUS = 2
+	Game_GAME_STATUS_UNSPECIFIED        Game_GAME_STATUS = 0
+	Game_GAME_STATUS_WAITING_TO_START   Game_GAME_STATUS = 1
+	Game_GAME_STATUS_WAITING_FOR_PLAYER Game_GAME_STATUS = 2
+	Game_GAME_STATUS_DONE               Game_GAME_STATUS = 3
 )
 
 // Enum value maps for Game_GAME_STATUS.
 var (
 	Game_GAME_STATUS_name = map[int32]string{
 		0: "GAME_STATUS_UNSPECIFIED",
-		1: "GAME_STATUS_WAITING_FOR_PLAYERS",
-		2: "GAME_STATUS_FINISHED",
+		1: "GAME_STATUS_WAITING_TO_START",
+		2: "GAME_STATUS_WAITING_FOR_PLAYER",
+		3: "GAME_STATUS_DONE",
 	}
 	Game_GAME_STATUS_value = map[string]int32{
-		"GAME_STATUS_UNSPECIFIED":         0,
-		"GAME_STATUS_WAITING_FOR_PLAYERS": 1,
-		"GAME_STATUS_FINISHED":            2,
+		"GAME_STATUS_UNSPECIFIED":        0,
+		"GAME_STATUS_WAITING_TO_START":   1,
+		"GAME_STATUS_WAITING_FOR_PLAYER": 2,
+		"GAME_STATUS_DONE":               3,
 	}
 )
 
@@ -117,19 +120,18 @@ func (x Turn_TURN_ACTION) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Turn_TURN_ACTION.Descriptor instead.
 func (Turn_TURN_ACTION) EnumDescriptor() ([]byte, []int) {
-	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{1, 0}
+	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{2, 0}
 }
 
 type Game struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	GameId             string                 `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
-	PlayerCards        []*v1.Card             `protobuf:"bytes,2,rep,name=player_cards,json=playerCards,proto3" json:"player_cards,omitempty"`
-	VisibleDealerCards []*v1.Card             `protobuf:"bytes,3,rep,name=visible_dealer_cards,json=visibleDealerCards,proto3" json:"visible_dealer_cards,omitempty"`
-	PlayerScore        int32                  `protobuf:"varint,4,opt,name=player_score,json=playerScore,proto3" json:"player_score,omitempty"`
-	DealerScore        int32                  `protobuf:"varint,5,opt,name=dealer_score,json=dealerScore,proto3" json:"dealer_score,omitempty"`
-	Status             Game_GAME_STATUS       `protobuf:"varint,6,opt,name=status,proto3,enum=blackjack.v1.blackjack.Game_GAME_STATUS" json:"status,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GameId        string                 `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
+	PlayerHands   map[string]*Hand       `protobuf:"bytes,2,rep,name=player_hands,json=playerHands,proto3" json:"player_hands,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Status        Game_GAME_STATUS       `protobuf:"varint,6,opt,name=status,proto3,enum=blackjack.v1.blackjack.Game_GAME_STATUS" json:"status,omitempty"`
+	NextPlayer    string                 `protobuf:"bytes,7,opt,name=next_player,json=nextPlayer,proto3" json:"next_player,omitempty"`
+	Winner        string                 `protobuf:"bytes,8,opt,name=winner,proto3" json:"winner,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Game) Reset() {
@@ -169,32 +171,11 @@ func (x *Game) GetGameId() string {
 	return ""
 }
 
-func (x *Game) GetPlayerCards() []*v1.Card {
+func (x *Game) GetPlayerHands() map[string]*Hand {
 	if x != nil {
-		return x.PlayerCards
+		return x.PlayerHands
 	}
 	return nil
-}
-
-func (x *Game) GetVisibleDealerCards() []*v1.Card {
-	if x != nil {
-		return x.VisibleDealerCards
-	}
-	return nil
-}
-
-func (x *Game) GetPlayerScore() int32 {
-	if x != nil {
-		return x.PlayerScore
-	}
-	return 0
-}
-
-func (x *Game) GetDealerScore() int32 {
-	if x != nil {
-		return x.DealerScore
-	}
-	return 0
 }
 
 func (x *Game) GetStatus() Game_GAME_STATUS {
@@ -204,16 +185,92 @@ func (x *Game) GetStatus() Game_GAME_STATUS {
 	return Game_GAME_STATUS_UNSPECIFIED
 }
 
+func (x *Game) GetNextPlayer() string {
+	if x != nil {
+		return x.NextPlayer
+	}
+	return ""
+}
+
+func (x *Game) GetWinner() string {
+	if x != nil {
+		return x.Winner
+	}
+	return ""
+}
+
+type Hand struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cards         []*v1.Card             `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
+	Score         int32                  `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`
+	IsBust        bool                   `protobuf:"varint,3,opt,name=is_bust,json=isBust,proto3" json:"is_bust,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Hand) Reset() {
+	*x = Hand{}
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Hand) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Hand) ProtoMessage() {}
+
+func (x *Hand) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Hand.ProtoReflect.Descriptor instead.
+func (*Hand) Descriptor() ([]byte, []int) {
+	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Hand) GetCards() []*v1.Card {
+	if x != nil {
+		return x.Cards
+	}
+	return nil
+}
+
+func (x *Hand) GetScore() int32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *Hand) GetIsBust() bool {
+	if x != nil {
+		return x.IsBust
+	}
+	return false
+}
+
 type Turn struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Action        Turn_TURN_ACTION       `protobuf:"varint,1,opt,name=action,proto3,enum=blackjack.v1.blackjack.Turn_TURN_ACTION" json:"action,omitempty"`
+	GameId        string                 `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
+	PlayerName    string                 `protobuf:"bytes,2,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	Action        Turn_TURN_ACTION       `protobuf:"varint,3,opt,name=action,proto3,enum=blackjack.v1.blackjack.Turn_TURN_ACTION" json:"action,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Turn) Reset() {
 	*x = Turn{}
-	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[1]
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -225,7 +282,7 @@ func (x *Turn) String() string {
 func (*Turn) ProtoMessage() {}
 
 func (x *Turn) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[1]
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -238,7 +295,21 @@ func (x *Turn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Turn.ProtoReflect.Descriptor instead.
 func (*Turn) Descriptor() ([]byte, []int) {
-	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{1}
+	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Turn) GetGameId() string {
+	if x != nil {
+		return x.GameId
+	}
+	return ""
+}
+
+func (x *Turn) GetPlayerName() string {
+	if x != nil {
+		return x.PlayerName
+	}
+	return ""
 }
 
 func (x *Turn) GetAction() Turn_TURN_ACTION {
@@ -248,28 +319,145 @@ func (x *Turn) GetAction() Turn_TURN_ACTION {
 	return Turn_TURN_ACTION_UNSPECIFIED
 }
 
+type NewGameRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlayerNames   []string               `protobuf:"bytes,1,rep,name=player_names,json=playerNames,proto3" json:"player_names,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NewGameRequest) Reset() {
+	*x = NewGameRequest{}
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NewGameRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewGameRequest) ProtoMessage() {}
+
+func (x *NewGameRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewGameRequest.ProtoReflect.Descriptor instead.
+func (*NewGameRequest) Descriptor() ([]byte, []int) {
+	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *NewGameRequest) GetPlayerNames() []string {
+	if x != nil {
+		return x.PlayerNames
+	}
+	return nil
+}
+
+type GetGameRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GameId        string                 `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
+	PlayerName    string                 `protobuf:"bytes,2,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetGameRequest) Reset() {
+	*x = GetGameRequest{}
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetGameRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetGameRequest) ProtoMessage() {}
+
+func (x *GetGameRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_blackjack_v1_blackjack_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetGameRequest.ProtoReflect.Descriptor instead.
+func (*GetGameRequest) Descriptor() ([]byte, []int) {
+	return file_proto_blackjack_v1_blackjack_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetGameRequest) GetGameId() string {
+	if x != nil {
+		return x.GameId
+	}
+	return ""
+}
+
+func (x *GetGameRequest) GetPlayerName() string {
+	if x != nil {
+		return x.PlayerName
+	}
+	return ""
+}
+
 var File_proto_blackjack_v1_blackjack_proto protoreflect.FileDescriptor
 
 const file_proto_blackjack_v1_blackjack_proto_rawDesc = "" +
 	"\n" +
-	"\"proto/blackjack/v1/blackjack.proto\x12\x16blackjack.v1.blackjack\x1a\x18proto/deck/v1/deck.proto\"\x8f\x03\n" +
+	"\"proto/blackjack/v1/blackjack.proto\x12\x16blackjack.v1.blackjack\x1a\x18proto/deck/v1/deck.proto\"\xd3\x03\n" +
 	"\x04Game\x12\x17\n" +
-	"\agame_id\x18\x01 \x01(\tR\x06gameId\x125\n" +
-	"\fplayer_cards\x18\x02 \x03(\v2\x12.deck.v1.deck.CardR\vplayerCards\x12D\n" +
-	"\x14visible_dealer_cards\x18\x03 \x03(\v2\x12.deck.v1.deck.CardR\x12visibleDealerCards\x12!\n" +
-	"\fplayer_score\x18\x04 \x01(\x05R\vplayerScore\x12!\n" +
-	"\fdealer_score\x18\x05 \x01(\x05R\vdealerScore\x12@\n" +
-	"\x06status\x18\x06 \x01(\x0e2(.blackjack.v1.blackjack.Game.GAME_STATUSR\x06status\"i\n" +
+	"\agame_id\x18\x01 \x01(\tR\x06gameId\x12P\n" +
+	"\fplayer_hands\x18\x02 \x03(\v2-.blackjack.v1.blackjack.Game.PlayerHandsEntryR\vplayerHands\x12@\n" +
+	"\x06status\x18\x06 \x01(\x0e2(.blackjack.v1.blackjack.Game.GAME_STATUSR\x06status\x12\x1f\n" +
+	"\vnext_player\x18\a \x01(\tR\n" +
+	"nextPlayer\x12\x16\n" +
+	"\x06winner\x18\b \x01(\tR\x06winner\x1a\\\n" +
+	"\x10PlayerHandsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x122\n" +
+	"\x05value\x18\x02 \x01(\v2\x1c.blackjack.v1.blackjack.HandR\x05value:\x028\x01\"\x86\x01\n" +
 	"\vGAME_STATUS\x12\x1b\n" +
-	"\x17GAME_STATUS_UNSPECIFIED\x10\x00\x12#\n" +
-	"\x1fGAME_STATUS_WAITING_FOR_PLAYERS\x10\x01\x12\x18\n" +
-	"\x14GAME_STATUS_FINISHED\x10\x02\"\xa0\x01\n" +
-	"\x04Turn\x12@\n" +
-	"\x06action\x18\x01 \x01(\x0e2(.blackjack.v1.blackjack.Turn.TURN_ACTIONR\x06action\"V\n" +
+	"\x17GAME_STATUS_UNSPECIFIED\x10\x00\x12 \n" +
+	"\x1cGAME_STATUS_WAITING_TO_START\x10\x01\x12\"\n" +
+	"\x1eGAME_STATUS_WAITING_FOR_PLAYER\x10\x02\x12\x14\n" +
+	"\x10GAME_STATUS_DONE\x10\x03\"_\n" +
+	"\x04Hand\x12(\n" +
+	"\x05cards\x18\x01 \x03(\v2\x12.deck.v1.deck.CardR\x05cards\x12\x14\n" +
+	"\x05score\x18\x02 \x01(\x05R\x05score\x12\x17\n" +
+	"\ais_bust\x18\x03 \x01(\bR\x06isBust\"\xda\x01\n" +
+	"\x04Turn\x12\x17\n" +
+	"\agame_id\x18\x01 \x01(\tR\x06gameId\x12\x1f\n" +
+	"\vplayer_name\x18\x02 \x01(\tR\n" +
+	"playerName\x12@\n" +
+	"\x06action\x18\x03 \x01(\x0e2(.blackjack.v1.blackjack.Turn.TURN_ACTIONR\x06action\"V\n" +
 	"\vTURN_ACTION\x12\x1b\n" +
 	"\x17TURN_ACTION_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fTURN_ACTION_HIT\x10\x01\x12\x15\n" +
-	"\x11TURN_ACTION_STAND\x10\x02B\xd4\x01\n" +
+	"\x11TURN_ACTION_STAND\x10\x02\"3\n" +
+	"\x0eNewGameRequest\x12!\n" +
+	"\fplayer_names\x18\x01 \x03(\tR\vplayerNames\"J\n" +
+	"\x0eGetGameRequest\x12\x17\n" +
+	"\agame_id\x18\x01 \x01(\tR\x06gameId\x12\x1f\n" +
+	"\vplayer_name\x18\x02 \x01(\tR\n" +
+	"playerName2\x82\x02\n" +
+	"\x10BlackjackService\x12Q\n" +
+	"\aNewGame\x12&.blackjack.v1.blackjack.NewGameRequest\x1a\x1c.blackjack.v1.blackjack.Game\"\x00\x12Q\n" +
+	"\aGetGame\x12&.blackjack.v1.blackjack.GetGameRequest\x1a\x1c.blackjack.v1.blackjack.Game\"\x00\x12H\n" +
+	"\bPlayTurn\x12\x1c.blackjack.v1.blackjack.Turn\x1a\x1c.blackjack.v1.blackjack.Game\"\x00B\xd4\x01\n" +
 	"\x1acom.blackjack.v1.blackjackB\x0eBlackjackProtoP\x01Z,github.com/chn555/schemas/proto/blackjack/v1\xa2\x02\x03BVB\xaa\x02\x16Blackjack.V1.Blackjack\xca\x02\x16Blackjack\\V1\\Blackjack\xe2\x02\"Blackjack\\V1\\Blackjack\\GPBMetadata\xea\x02\x18Blackjack::V1::Blackjackb\x06proto3"
 
 var (
@@ -285,24 +473,35 @@ func file_proto_blackjack_v1_blackjack_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_blackjack_v1_blackjack_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_blackjack_v1_blackjack_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_blackjack_v1_blackjack_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_blackjack_v1_blackjack_proto_goTypes = []any{
-	(Game_GAME_STATUS)(0), // 0: blackjack.v1.blackjack.Game.GAME_STATUS
-	(Turn_TURN_ACTION)(0), // 1: blackjack.v1.blackjack.Turn.TURN_ACTION
-	(*Game)(nil),          // 2: blackjack.v1.blackjack.Game
-	(*Turn)(nil),          // 3: blackjack.v1.blackjack.Turn
-	(*v1.Card)(nil),       // 4: deck.v1.deck.Card
+	(Game_GAME_STATUS)(0),  // 0: blackjack.v1.blackjack.Game.GAME_STATUS
+	(Turn_TURN_ACTION)(0),  // 1: blackjack.v1.blackjack.Turn.TURN_ACTION
+	(*Game)(nil),           // 2: blackjack.v1.blackjack.Game
+	(*Hand)(nil),           // 3: blackjack.v1.blackjack.Hand
+	(*Turn)(nil),           // 4: blackjack.v1.blackjack.Turn
+	(*NewGameRequest)(nil), // 5: blackjack.v1.blackjack.NewGameRequest
+	(*GetGameRequest)(nil), // 6: blackjack.v1.blackjack.GetGameRequest
+	nil,                    // 7: blackjack.v1.blackjack.Game.PlayerHandsEntry
+	(*v1.Card)(nil),        // 8: deck.v1.deck.Card
 }
 var file_proto_blackjack_v1_blackjack_proto_depIdxs = []int32{
-	4, // 0: blackjack.v1.blackjack.Game.player_cards:type_name -> deck.v1.deck.Card
-	4, // 1: blackjack.v1.blackjack.Game.visible_dealer_cards:type_name -> deck.v1.deck.Card
-	0, // 2: blackjack.v1.blackjack.Game.status:type_name -> blackjack.v1.blackjack.Game.GAME_STATUS
+	7, // 0: blackjack.v1.blackjack.Game.player_hands:type_name -> blackjack.v1.blackjack.Game.PlayerHandsEntry
+	0, // 1: blackjack.v1.blackjack.Game.status:type_name -> blackjack.v1.blackjack.Game.GAME_STATUS
+	8, // 2: blackjack.v1.blackjack.Hand.cards:type_name -> deck.v1.deck.Card
 	1, // 3: blackjack.v1.blackjack.Turn.action:type_name -> blackjack.v1.blackjack.Turn.TURN_ACTION
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 4: blackjack.v1.blackjack.Game.PlayerHandsEntry.value:type_name -> blackjack.v1.blackjack.Hand
+	5, // 5: blackjack.v1.blackjack.BlackjackService.NewGame:input_type -> blackjack.v1.blackjack.NewGameRequest
+	6, // 6: blackjack.v1.blackjack.BlackjackService.GetGame:input_type -> blackjack.v1.blackjack.GetGameRequest
+	4, // 7: blackjack.v1.blackjack.BlackjackService.PlayTurn:input_type -> blackjack.v1.blackjack.Turn
+	2, // 8: blackjack.v1.blackjack.BlackjackService.NewGame:output_type -> blackjack.v1.blackjack.Game
+	2, // 9: blackjack.v1.blackjack.BlackjackService.GetGame:output_type -> blackjack.v1.blackjack.Game
+	2, // 10: blackjack.v1.blackjack.BlackjackService.PlayTurn:output_type -> blackjack.v1.blackjack.Game
+	8, // [8:11] is the sub-list for method output_type
+	5, // [5:8] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_proto_blackjack_v1_blackjack_proto_init() }
@@ -316,9 +515,9 @@ func file_proto_blackjack_v1_blackjack_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_blackjack_v1_blackjack_proto_rawDesc), len(file_proto_blackjack_v1_blackjack_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   2,
+			NumMessages:   6,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_proto_blackjack_v1_blackjack_proto_goTypes,
 		DependencyIndexes: file_proto_blackjack_v1_blackjack_proto_depIdxs,

@@ -7,24 +7,50 @@ import "proto/deck/v1/deck.proto";
 
 message Game {
   string game_id = 1;
-  repeated deck.v1.deck.Card player_cards = 2;
-  repeated deck.v1.deck.Card visible_dealer_cards = 3;
-  int32 player_score = 4;
-  int32 dealer_score = 5;
+  map<string,Hand> player_hands =2;
 
   enum GAME_STATUS {
     GAME_STATUS_UNSPECIFIED = 0;
-    GAME_STATUS_WAITING_FOR_PLAYERS = 1;
-    GAME_STATUS_FINISHED = 2;
+    GAME_STATUS_WAITING_TO_START = 1;
+    GAME_STATUS_WAITING_FOR_PLAYER = 2;
+    GAME_STATUS_DONE = 3;
   }
   GAME_STATUS status = 6;
+  string next_player = 7;
+  string winner = 8;
+}
+
+message Hand {
+  repeated deck.v1.deck.Card cards = 1;
+  int32 score = 2;
+  bool is_bust = 3;
 }
 
 message Turn {
+  string game_id = 1;
+  string player_name = 2;
   enum TURN_ACTION {
     TURN_ACTION_UNSPECIFIED = 0;
     TURN_ACTION_HIT = 1;
     TURN_ACTION_STAND = 2;
   }
-  TURN_ACTION action = 1;
+  TURN_ACTION action = 3;
+}
+
+message NewGameRequest{
+  repeated string player_names = 1;
+}
+
+message GetGameRequest{
+  string game_id = 1;
+  string player_name =2;
+}
+
+service BlackjackService {
+
+  rpc NewGame(NewGameRequest) returns (Game){};
+
+  rpc GetGame(GetGameRequest) returns (Game){};
+
+  rpc PlayTurn(Turn) returns (Game){}
 }
