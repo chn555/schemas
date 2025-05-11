@@ -25,7 +25,7 @@ type Card_Suit int32
 
 const (
 	Card_SUIT_UNSPECIFIED Card_Suit = 0
-	Card_SUIT_ACES        Card_Suit = 1
+	Card_SUIT_HEARTS      Card_Suit = 1
 	Card_SUIT_SPADES      Card_Suit = 2
 	Card_SUIT_DIAMONDS    Card_Suit = 3
 	Card_SUIT_CLUBS       Card_Suit = 4
@@ -37,7 +37,7 @@ const (
 var (
 	Card_Suit_name = map[int32]string{
 		0: "SUIT_UNSPECIFIED",
-		1: "SUIT_ACES",
+		1: "SUIT_HEARTS",
 		2: "SUIT_SPADES",
 		3: "SUIT_DIAMONDS",
 		4: "SUIT_CLUBS",
@@ -46,7 +46,7 @@ var (
 	}
 	Card_Suit_value = map[string]int32{
 		"SUIT_UNSPECIFIED": 0,
-		"SUIT_ACES":        1,
+		"SUIT_HEARTS":      1,
 		"SUIT_SPADES":      2,
 		"SUIT_DIAMONDS":    3,
 		"SUIT_CLUBS":       4,
@@ -376,13 +376,13 @@ const file_proto_deck_v1_deck_proto_rawDesc = "" +
 	"\n" +
 	"\x18proto/deck/v1/deck.proto\x12\fdeck.v1.deck\"\x1f\n" +
 	"\x04Deck\x12\x17\n" +
-	"\adeck_id\x18\x01 \x01(\tR\x06deckId\"\xcd\x01\n" +
+	"\adeck_id\x18\x01 \x01(\tR\x06deckId\"\xcf\x01\n" +
 	"\x04Card\x12+\n" +
 	"\x04suit\x18\x01 \x01(\x0e2\x17.deck.v1.deck.Card.SuitR\x04suit\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value\"\x81\x01\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value\"\x83\x01\n" +
 	"\x04Suit\x12\x14\n" +
-	"\x10SUIT_UNSPECIFIED\x10\x00\x12\r\n" +
-	"\tSUIT_ACES\x10\x01\x12\x0f\n" +
+	"\x10SUIT_UNSPECIFIED\x10\x00\x12\x0f\n" +
+	"\vSUIT_HEARTS\x10\x01\x12\x0f\n" +
 	"\vSUIT_SPADES\x10\x02\x12\x11\n" +
 	"\rSUIT_DIAMONDS\x10\x03\x12\x0e\n" +
 	"\n" +

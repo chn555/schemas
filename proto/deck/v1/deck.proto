@@ -11,7 +11,7 @@ message Deck {
 message Card {
   enum Suit {
     SUIT_UNSPECIFIED = 0;
-    SUIT_ACES = 1;
+    SUIT_HEARTS = 1;
     SUIT_SPADES = 2;
     SUIT_DIAMONDS = 3;
     SUIT_CLUBS = 4;
